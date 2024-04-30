@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+</head>
+<body>
+
+    <div id="timeContainer">
+        <div id="timeDisplay">00:00:00</div>
+        <button id="startButton" class="timeButton">Mulai</button>
+        <button id="pauseButton" class="timeButton">Berhenti</button>
+        <button id="resetButton" class="timeButton">Ulang</button>
+    </div>
+    
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        .timeButton{
+            width: 80px;
+            height: 30px;
+            border: 3px solid;
+            border-radius: 12px;
+            background-color: aqua;
+            cursor: pointer;
+            color: black;
+            font-family: consolas, monospace;
+        }
+        
+        #timeDisplay{
+            font-size: 75px;
+            color: #40c437;
+            font-family: consolas, monospace;
+        }
+
+        #timeContainer{
+            text-align: center;
+            border: 3px solid;
+            border-radius: 25px;
+            background-color: black;
+        }
+
+
+
+    </style>
+
+    <script>
+
+        // memanggil element #timeDisplay 
+        const timeDisplay = document.querySelector("#timeDisplay");
+        // memanggil element #startButton 
+        const startButton = document.querySelector("#startButton");
+        // memanggil element #pauseButton 
+        const pauseButton = document.querySelector("#pauseButton");
+        // memanggil element #resetButton
+        const resetButton = document.querySelector("#resetButton");
+
+        // memiliki variabel yaitu :
+        // startTime = 0 => waktu awal permulaian waktu dari 0
+        let startTime = 0;
+        // elapsedTime 0; => waktu yang sudah berlalu
+        let elapsedTime = 0;
+        // currentTim = 0; =>  waktu saat ini / selisih waktu antara waktu saat ini dengan waktu awal (startTime)
+        let currenTime = 0;
+        // paused = true; =>  waktu akan berhenti jika diklik atau tidak
+        let paused = true;
+        // interValid; =>  untuk mengatur interval waktu yang terus berjalan
+        let intervalId;
+        // hrs =0; => permulaian jam dari 0
+        let hrs = 0;
+        // mins = 0; => permulaian meenit dari 0
+        let mins = 0;
+        // secs = 0; => permulaian detik dari 0
+        let secs = 0;
+
+        //  ketika startButton di klik maka akan muncul fungsi
+        startButton.addEventListener("click", () => {
+            // paused adalah boolean false, jadi  waktu tidak berhenti lagi
+            if(paused){
+                paused = false;
+                // mulai dari angka 0 dan akan berjalan selama 1000miliseconds
+                // Date.now berfungsi  untuk mendapatkan waktu saat ini dalam milidetik dan tidak kembali ke waktu yang sudah berlalu
+                startTime = Date.now() - elapsedTime ;
+                intervalId = setInterval(updateTime, 1000);
+            }
+        });
+        // ketika pauseButton di klik maka akan muncul fungsi berikut
+        pauseButton.addEventListener("click", () => {
+            // !paused bersifat false, jika paused di klik maka menjadi true
+            if( !paused ){
+                paused = true;
+                // waktu yang berlalu diberhentikan dan waktu berhenti sesuai  dengan saat ini
+                elapsedTime = Date.now() -  startTime;
+                // menghentikan  interval waktu berjalan
+                clearInterval(intervalId)
+            }
+        });
+        resetButton.addEventListener("click", () => {
+            // paused bernilai true
+            paused = true;
+            // menghentikan interval waktu berjalan
+            clearInterval(intervalId);
+            // waktu  di reset ke 0
+            elapsedTime = 0;
+            // waktu dikembalikan menjadi 0
+            currenTime = 0;
+            // jam kembali 0
+            hrs = 0;
+            // menit kembali 0
+            mins = 0;
+            // secs kembali 0
+            secs = 0;
+            //  isi elemen time-display kembali menjadi 00:00:00 
+            timeDisplay.textContent = "00:00:00";
+        });
+
+
+        function updateTime(){
+            //  menghitung waktu yang telah berlalu sejak stopwatch dimulai.
+            elapsedTime = Date.now() - startTime;
+
+            
+            secs = Math.floor((elapsedTime / 1000) % 60);      
+            mins = Math.floor((elapsedTime / (1000 * 60)) % 60);      
+            hrs = Math.floor((elapsedTime / (1000 * 60 * 60)) % 60);      
+        
+            // secs,mins,hrs akan menapilkan angka 0 tambahan  di depannya jika angkanya lebih dari 9
+            secs = pad(secs);
+            mins = pad(mins);
+            hrs = pad(hrs);
+            
+            // timeDisplay akan menampilkan angka 0 didepannya
+            timeDisplay.textContent = `${hrs}:${mins}:${secs}`;
+            
+
+            // unit pad memiliki fungsi yaitu
+            function pad(unit){
+                // mengembalikan nilai 0 pada unit yang jaraknya kurang dari 2  angka, maka akan ditambahkan angka 0 didepannya
+                return(("0") + unit).length > 2 ? unit : "0" + unit;
+            }
+
+        }
+    </script>
+    
+</body>
+</html>
